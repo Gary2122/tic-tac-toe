@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { calculateFiveWinner } from "../../tools/calculateWinner";
 const FiveToe:React.FC = ()=>{
     const initSquares = Array.from({length: 15},
@@ -12,7 +12,6 @@ const FiveToe:React.FC = ()=>{
       const resetGame = () => { //重新开始游戏
         setWinner('')
         setTimes(0)
-        setNextUser('black')
         setSquares(initSquares)
         setHistory([initSquares])
       }
@@ -21,7 +20,6 @@ const FiveToe:React.FC = ()=>{
         setSquares(history[step])
         setTimes(step)
         setWinner('')
-        setNextUser(step % 2 === 0 ? 'black' : 'white')
       }
     const handleClick = (event: React.MouseEvent<HTMLTableCellElement>, rowIndex: number, colIndex: number, winner: string)=> {//鼠标点击事件
       if(winner) return
@@ -57,10 +55,10 @@ const FiveToe:React.FC = ()=>{
 
       if (times % 2 === 0) {
           item = 'black';
-          setNextUser('white')
+          // setNextUser('white')
       } else {
           item = 'white';
-          setNextUser('black')
+          // setNextUser('black')
       }
       const newSquares = squares.map((row, rIndex) =>
         row.map((col, cIndex) =>
@@ -71,7 +69,7 @@ const FiveToe:React.FC = ()=>{
 
       const newHistory = history.slice(0, times + 1)
       setHistory([...newHistory, newSquares])
-      
+
       setTimes(times + 1);
       setSquares(newSquares);
 
@@ -82,6 +80,9 @@ const FiveToe:React.FC = ()=>{
         setWinner('Draw')
       }
     }
+    useEffect(()=>{
+      setNextUser(times % 2 === 0 ? 'Black' : 'White')
+    },[times, setNextUser])
     return (
         <div>
           <div className="mb-20"><label>跳转到步骤：</label> <select onChange={(e)=>jumpToStep(Number(e.target.value))} value={times} name="" id="">

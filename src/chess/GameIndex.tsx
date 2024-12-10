@@ -11,7 +11,7 @@ const GameIndex: React.FC = ()=> {
         setGameName(value ? "五子棋" : "井字棋")
     }
     return(
-        <div className="transition-all-800" style={{marginTop: gameStart ? "0px" : "200px"}}>
+        <div className="transition-all-1000 transition-ease-out " style={{marginTop: gameStart ? "0px" : "200px"}}>
         <h1 className=''>{gameStart ? gameName : '棋盘游戏'}</h1>
         {!gameStart && (
           <div><Setting isfive={isFive} setIsfive={editGameMode}></Setting>

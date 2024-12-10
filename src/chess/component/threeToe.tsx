@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../../css/threeToe.css"
 import { calculateThreeWinner } from "../../tools/calculateWinner";
 const ThreeToe:React.FC = () => {
@@ -6,6 +6,7 @@ const ThreeToe:React.FC = () => {
     const [squares, setSquares] = useState(initSquares);
     const [times, setTimes] = useState(0); // 记录玩家回合
     const [winner, setWinner] = useState(''); // 存储赢家 ('X' 或 'O')
+    const [nextUser, setNextUser] = useState('X')
     const [history, setHistory] = useState([initSquares]); // 用于存储历史记录
 
     // 跳转到历史步骤
@@ -20,6 +21,7 @@ const ThreeToe:React.FC = () => {
         setSquares(initSquares);
         setTimes(0);
         setWinner('');
+        setNextUser('X')
         setHistory([initSquares]);
     };
     // 点击事件，玩家落子
@@ -33,7 +35,6 @@ const ThreeToe:React.FC = () => {
 
         setSquares(newSquares);
         setTimes(times + 1);
-
         const gameWinner = calculateThreeWinner(newSquares)
         if (gameWinner) {
             setWinner(gameWinner);
@@ -41,7 +42,9 @@ const ThreeToe:React.FC = () => {
             setWinner('Draw');
         }
     };
-
+    useEffect(()=>{
+        setNextUser(times % 2 === 0 ? 'X' : 'O')
+    },[times, setNextUser])
     return (
         <div >
             <div className="mb-20">
@@ -84,6 +87,7 @@ const ThreeToe:React.FC = () => {
                     <button onClick={resetGame}>重新开始</button>
                 </div>
             )}
+            <div className="flex-cc mt-20">下一个玩家： {nextUser}</div>
         </div>
     );
 };
