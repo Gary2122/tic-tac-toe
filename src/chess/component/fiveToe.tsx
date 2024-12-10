@@ -1,24 +1,18 @@
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import { calculateFiveWinner } from "../../tools/calculateWinner";
-interface fiveToeProps{
-    sendValueFromFive: (value:string)=>void,
-    sendWinnerValue: (value: string)=>void
-}
-const FiveToe:React.FC<fiveToeProps> = ({sendValueFromFive, sendWinnerValue})=>{
+const FiveToe:React.FC = ()=>{
     const initSquares = Array.from({length: 15},
         () => new Array(15).fill(''));
       const [squares, setSquares] = useState(initSquares);
       const [times, setTimes] = useState(0);
       const [winner, setWinner] = useState('')
       const [history, setHistory] = useState([initSquares])
-
-      const sendValue = (value: string)=> { //发送下一个角色
-        sendValueFromFive(value)
-      }
+      const [nextUser, setNextUser] = useState('black')
 
       const resetGame = () => { //重新开始游戏
         setWinner('')
         setTimes(0)
+        setNextUser('black')
         setSquares(initSquares)
         setHistory([initSquares])
       }
@@ -27,16 +21,12 @@ const FiveToe:React.FC<fiveToeProps> = ({sendValueFromFive, sendWinnerValue})=>{
         setSquares(history[step])
         setTimes(step)
         setWinner('')
-        sendWinnerValue('')
+        setNextUser(step % 2 === 0 ? 'black' : 'white')
       }
-
-      useEffect(()=>{
-        if(winner !== '')
-        sendWinnerValue(winner === 'Draw' ? '平局' : winner)
-      }, [winner, sendWinnerValue])
-
-    const handleClick = (event: React.MouseEvent<HTMLTableCellElement>, rowIndex: number, colIndex: number)=> {//鼠标点击事件
-
+    const handleClick = (event: React.MouseEvent<HTMLTableCellElement>, rowIndex: number, colIndex: number, winner: string)=> {//鼠标点击事件
+      if(winner) return
+      let item = squares[rowIndex][colIndex];
+      if (item !== '')return
       const clickedElement = event.target as HTMLTableCellElement;
       const rect = clickedElement.getBoundingClientRect();
       const x = event.clientX - rect.left;
@@ -65,17 +55,12 @@ const FiveToe:React.FC<fiveToeProps> = ({sendValueFromFive, sendWinnerValue})=>{
           }
       }
 
-      let item = squares[rowIndex][colIndex];
-      if (item !== '') {
-          return;
-      }
-
       if (times % 2 === 0) {
           item = 'black';
-          sendValue('white')
+          setNextUser('white')
       } else {
           item = 'white';
-          sendValue('black')
+          setNextUser('black')
       }
       const newSquares = squares.map((row, rIndex) =>
         row.map((col, cIndex) =>
@@ -86,24 +71,20 @@ const FiveToe:React.FC<fiveToeProps> = ({sendValueFromFive, sendWinnerValue})=>{
 
       const newHistory = history.slice(0, times + 1)
       setHistory([...newHistory, newSquares])
-
+      
       setTimes(times + 1);
       setSquares(newSquares);
 
-      const winner = calculateFiveWinner(newSquares)
-      if(winner) {
-        setWinner(winner)
+      const gameWinner = calculateFiveWinner(newSquares)
+      if(gameWinner) {
+        setWinner(gameWinner)
       } else if(times === 224){
         setWinner('Draw')
       }
     }
     return (
         <div>
-          {winner && (
-            <div className="mb-20">{winner === 'Draw' ? '平局' : `${winner} 胜利！`}<button onClick={resetGame}>重新开始</button></div>
-            
-          )}
-          <div><label>跳转到步骤：</label> <select onChange={(e)=>jumpToStep(Number(e.target.value))} value={times} name="" id="">
+          <div className="mb-20"><label>跳转到步骤：</label> <select onChange={(e)=>jumpToStep(Number(e.target.value))} value={times} name="" id="">
           {history.map((_, index) => (
             <option key={index} value={index}>
               第 {index} 步
@@ -119,30 +100,20 @@ const FiveToe:React.FC<fiveToeProps> = ({sendValueFromFive, sendWinnerValue})=>{
                 row.map((col, colIndex) => {
                   return <td key={colIndex}
                             style={{border: '1px solid #000', width: '20px', height: '20px'}}
-                            onClick={(event)=>handleClick(event, rowIndex, colIndex)}
+                            onClick={(event)=>handleClick(event, rowIndex, colIndex, winner)}
                   >
-                    {col === 'white' ?
+                    {(col === 'white' || col === 'black' )?
                       <div
                         style={{
                           width: '100%',
                           height: '100%',
-                          backgroundColor: 'white',
+                          backgroundColor: col,
                           borderRadius: '50%',
                           position: "relative",
                           right: "-50%",
                           bottom: "-50%"
                         }}></div>
-                      : (col === 'black' ?
-                        <div
-                          style={{
-                            width: '100%',
-                            height: '100%',
-                            backgroundColor: 'black',
-                            borderRadius: '50%',
-                            position: "relative",
-                            right: "-50%",
-                            bottom: "-50%"
-                          }}></div> : col)}
+                      : col}
                   </td>
                 })
               }
@@ -151,6 +122,10 @@ const FiveToe:React.FC<fiveToeProps> = ({sendValueFromFive, sendWinnerValue})=>{
         }
         </tbody>
       </table>
+      {winner && (
+            <div className="mb-20">{winner === 'Draw' ? '平局' : `${winner} 胜利！`}<button onClick={resetGame}>重新开始</button></div>
+      )}
+      <div className="flex-cc">下一个玩家： {nextUser}</div>
     </div>
     )
 }
