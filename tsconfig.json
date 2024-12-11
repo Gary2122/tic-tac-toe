@@ -1,11 +1,17 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ],
-  // "include": [
-  //   "src",
-  //   "./auto-imports.d.ts"//此处引入系统自动生成的文件
-  // ],
+    "files": [],
+    "references": [
+        { "path": "./tsconfig.app.json" },
+        { "path": "./tsconfig.node.json" }
+    ],
+    // "include": [
+    //   "src",
+    //   "./auto-imports.d.ts"//此处引入系统自动生成的文件
+    // ],
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["src/*"]
+        }
+    }
 }

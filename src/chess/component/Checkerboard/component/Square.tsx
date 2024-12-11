@@ -1,5 +1,5 @@
 import React from 'react';
-
+import '../../../../css/square.css';
 interface SquareProps {
     value: string;
     size: number;
@@ -10,7 +10,7 @@ interface SquareProps {
 const Square: React.FC<SquareProps> = ({ value, size, isCur, squareClick }) => {
     return (
         <div
-            className="square"
+            className="square cursor-pointer"
             style={{
                 width: size,
                 height: size,
