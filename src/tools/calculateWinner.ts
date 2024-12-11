@@ -35,6 +35,55 @@ export const calculateThreeWinner = (squares: Array<Array<string>>) => {
   }
   return null;
 };
+export const calculateWinner = (
+  squares: Array<Array<string>>, // 棋盘的二维数组
+  winCondition: number // 胜利条件，例如 3 表示井字棋，5 表示五子棋
+): string | null => {
+  const size = squares.length; // 棋盘大小
+
+  // 检查某个方向是否满足胜利条件
+  const checkDirection = (
+    startX: number,
+    startY: number,
+    deltaX: number,
+    deltaY: number
+  ): boolean => {
+    const player = squares[startX][startY];
+    if (!player) return false;
+
+    for (let step = 1; step < winCondition; step++) {
+      const x = startX + deltaX * step;
+      const y = startY + deltaY * step;
+
+      if (
+        x < 0 ||
+        x >= size ||
+        y < 0 ||
+        y >= size ||
+        squares[x][y] !== player
+      ) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  // 遍历棋盘检查每个点作为起点
+  for (let i = 0; i < size; i++) {
+    for (let j = 0; j < size; j++) {
+      if (
+        checkDirection(i, j, 1, 0) || // 检查横向
+        checkDirection(i, j, 0, 1) || // 检查纵向
+        checkDirection(i, j, 1, 1) || // 检查右下对角线
+        checkDirection(i, j, 1, -1) // 检查左下对角线
+      ) {
+        return squares[i][j];
+      }
+    }
+  }
+
+  return null; // 没有赢家
+};
 
 export const calculateFiveWinner = (squares: Array<Array<string>>) => {
   for (let i = 0; i < 15; i++) {

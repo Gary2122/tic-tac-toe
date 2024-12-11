@@ -1,6 +1,6 @@
 import React, { useState } from "react"
-import Board from "./component/board"
-import Setting from "./component/setting"
+import Checkerboard from "./component/Checkerboard"
+import Setting from "./component/Setting"
 import { Button } from '@mui/material';
 const GameIndex: () => JSX.Element = ()=> {
     const [isFive, setIsFive] = useState(false)
@@ -22,7 +22,7 @@ const GameIndex: () => JSX.Element = ()=> {
           <>
           <Button variant="contained" color="primary" onClick={()=>setGameStart(false)}>返回主页</Button>
           <div className="flex-cc transition-all mt-20">
-            <Board isFive={isFive} ></Board>
+            <Checkerboard isFive={isFive} ></Checkerboard>
           </div>
           </>
         )}

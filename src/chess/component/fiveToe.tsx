@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { calculateFiveWinner } from "../../tools/calculateWinner";
+import { calculateWinner } from "../../tools/calculateWinner";
 const FiveToe:React.FC = ()=>{
     const initSquares = Array.from({length: 15},
         () => new Array(15).fill(''));
@@ -15,7 +15,6 @@ const FiveToe:React.FC = ()=>{
         setSquares(initSquares)
         setHistory([initSquares])
       }
-
       const jumpToStep = (step:number) => {
         setSquares(history[step])
         setTimes(step)
@@ -25,34 +24,6 @@ const FiveToe:React.FC = ()=>{
       if(winner) return
       let item = squares[rowIndex][colIndex];
       if (item !== '')return
-      const clickedElement = event.target as HTMLTableCellElement;
-      const rect = clickedElement.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
-      const width = clickedElement.getBoundingClientRect().width;
-      const height = clickedElement.getBoundingClientRect().height;
-      const left = x / width;
-      const top = y / height;
-      
-      if (left < 0.5 && top < 0.5) { // 左上
-          if (rowIndex > 0) {
-          rowIndex--;
-          }
-          if (colIndex > 0) {
-          colIndex--;
-          }
-      }
-      if (left < 0.5 && top > 0.5) { // 左下
-          if (colIndex > 0) {
-          colIndex--;
-          }
-      }
-      if (left > 0.5 && top < 0.5) { // 右上
-          if (rowIndex > 0) {
-          rowIndex--;
-          }
-      }
-
       if (times % 2 === 0) {
           item = 'black';
           // setNextUser('white')
@@ -73,7 +44,7 @@ const FiveToe:React.FC = ()=>{
       setTimes(times + 1);
       setSquares(newSquares);
 
-      const gameWinner = calculateFiveWinner(newSquares)
+      const gameWinner = calculateWinner(newSquares, 5)
       if(gameWinner) {
         setWinner(gameWinner)
       } else if(times === 224){
@@ -111,8 +82,6 @@ const FiveToe:React.FC = ()=>{
                           backgroundColor: col,
                           borderRadius: '50%',
                           position: "relative",
-                          right: "-50%",
-                          bottom: "-50%"
                         }}></div>
                       : col}
                   </td>

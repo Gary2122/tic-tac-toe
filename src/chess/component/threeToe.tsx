@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../../css/threeToe.css"
-import { calculateThreeWinner } from "../../tools/calculateWinner";
+import { calculateWinner } from "../../tools/calculateWinner";
 const ThreeToe:React.FC = () => {
     const initSquares = Array.from({ length: 3 }, () => new Array(3).fill(''));
     const [squares, setSquares] = useState(initSquares);
@@ -35,7 +35,7 @@ const ThreeToe:React.FC = () => {
 
         setSquares(newSquares);
         setTimes(times + 1);
-        const gameWinner = calculateThreeWinner(newSquares)
+        const gameWinner = calculateWinner(newSquares, 3)
         if (gameWinner) {
             setWinner(gameWinner);
         } else if (times === 8) {
