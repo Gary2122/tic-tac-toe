@@ -1,5 +1,6 @@
 import FiveToe from "./fiveToe"
 import ThreeToe from "./threeToe"
+import React from 'react';
 interface BoardProps {
     isFive: boolean,
 }

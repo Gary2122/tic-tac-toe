@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import Board from "./component/board"
 import Setting from "./component/setting"
 import { Button } from '@mui/material';
-const GameIndex: React.FC = ()=> {
+const GameIndex: () => JSX.Element = ()=> {
     const [isFive, setIsFive] = useState(false)
     const [gameStart, setGameStart] = useState(false)
     const [gameName, setGameName] = useState('井字棋')
