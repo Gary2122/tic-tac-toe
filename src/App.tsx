@@ -1,4 +1,3 @@
-// import { useState } from 'react'
 import './App.css'
 import GameIndex from './chess/GameIndex'
 import React from 'react';
