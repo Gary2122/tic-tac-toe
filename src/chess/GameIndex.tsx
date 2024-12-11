@@ -7,19 +7,21 @@ const GameIndex: () => JSX.Element = () => {
     const [gameStart, setGameStart] = useState(false);
     const [gameName, setGameName] = useState('井字棋');
     const [boardSize, setBoardSize] = useState(3);
+    const [toeNum, setToeNum] = useState(3);
     const editGameMode = (value: boolean) => {
         setIsFive(value);
         setGameName(value ? '五子棋' : '井字棋');
         setBoardSize(value ? 15 : 3);
+        setToeNum(value ? 5 : 3);
     };
     return (
         <div
             className="transition-margin-1000 transition-ease-out "
             style={{ marginTop: gameStart ? '0px' : '200px' }}
         >
-            <h1 className="">{gameStart ? gameName : '棋盘游戏'}</h1>
+            <h1 className="color-#000">{gameStart ? gameName : '棋盘游戏'}</h1>
             {!gameStart && (
-                <div>
+                <div className="color-#000">
                     <Setting isfive={isFive} setIsfive={editGameMode}></Setting>
                     <div className="mt-30">
                         <Button
@@ -42,7 +44,10 @@ const GameIndex: () => JSX.Element = () => {
                         返回主页
                     </Button>
                     <div className="flex-cc transition-all mt-20">
-                        <Checkerboard boardSize={boardSize}></Checkerboard>
+                        <Checkerboard
+                            boardSize={boardSize}
+                            toeSize={toeNum}
+                        ></Checkerboard>
                     </div>
                 </>
             )}

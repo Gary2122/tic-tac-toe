@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { calculateWinner } from '../../../tools/calculateWinner';
+import GameInfo from './component/GameInfo';
 interface BoardProps {
+    toeSize: number;
     boardSize: number;
 }
 
-const Checkerboard: React.FC<BoardProps> = ({ boardSize }) => {
+const Checkerboard: React.FC<BoardProps> = ({ boardSize, toeSize }) => {
     const initSquares = Array.from({ length: boardSize }, () =>
         new Array(boardSize).fill('')
     );
@@ -29,10 +31,7 @@ const Checkerboard: React.FC<BoardProps> = ({ boardSize }) => {
         setSquares(history[step]);
         setTimes(step);
         setWinner('');
-        const gameWinner = calculateWinner(
-            history[step],
-            boardSize !== 3 ? 5 : 3
-        );
+        const gameWinner = calculateWinner(history[step], toeSize);
         if (gameWinner) {
             setWinner(gameWinner);
         }
@@ -69,10 +68,10 @@ const Checkerboard: React.FC<BoardProps> = ({ boardSize }) => {
         setTimes(times + 1);
         setSquares(newSquares);
 
-        const gameWinner = calculateWinner(newSquares, boardSize !== 3 ? 5 : 3);
+        const gameWinner = calculateWinner(newSquares, toeSize);
         if (gameWinner) {
             setWinner(gameWinner);
-        } else if (times === (boardSize !== 3 ? 224 : 8)) {
+        } else if (times === boardSize * boardSize - 1) {
             setWinner('Draw');
         }
     };
@@ -151,17 +150,11 @@ const Checkerboard: React.FC<BoardProps> = ({ boardSize }) => {
                     </tbody>
                 </table>
             </div>
-            {winner && (
-                <div className="mb-20 mt-20">
-                    {winner === 'Draw' ? '平局' : `${winner} 胜利！`}
-                    <button onClick={resetGame}>重新开始</button>
-                </div>
-            )}
-            {!winner && (
-                <div className="flex-cc mt-20">
-                    下一个玩家： <div className="w-20">{nextUser}</div>
-                </div>
-            )}
+            <GameInfo
+                nextUser={nextUser}
+                winner={winner}
+                resetGame={resetGame}
+            ></GameInfo>
         </div>
     );
 };
