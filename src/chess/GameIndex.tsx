@@ -6,12 +6,14 @@ const GameIndex: () => JSX.Element = ()=> {
     const [isFive, setIsFive] = useState(false)
     const [gameStart, setGameStart] = useState(false)
     const [gameName, setGameName] = useState('井字棋')
+    const [boardSize, setBoardSize] = useState(3)
     const editGameMode = (value:boolean)=>{
         setIsFive(value)
         setGameName(value ? "五子棋" : "井字棋")
+        setBoardSize(value ? 15 : 3)
     }
     return(
-        <div className="transition-all-1000 transition-ease-out " style={{marginTop: gameStart ? "0px" : "200px"}}>
+        <div className="transition-margin-1000 transition-ease-out " style={{marginTop: gameStart ? "0px" : "200px"}}>
         <h1 className=''>{gameStart ? gameName : '棋盘游戏'}</h1>
         {!gameStart && (
           <div><Setting isfive={isFive} setIsfive={editGameMode}></Setting>
@@ -22,7 +24,7 @@ const GameIndex: () => JSX.Element = ()=> {
           <>
           <Button variant="contained" color="primary" onClick={()=>setGameStart(false)}>返回主页</Button>
           <div className="flex-cc transition-all mt-20">
-            <Checkerboard isFive={isFive} ></Checkerboard>
+            <Checkerboard boardSize={boardSize}></Checkerboard>
           </div>
           </>
         )}
