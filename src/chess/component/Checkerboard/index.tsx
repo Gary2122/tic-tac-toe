@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { calculateWinner } from '../../../tools/calculateWinner';
 import GameInfo from './component/GameInfo';
+import Square from './component/Square';
 interface BoardProps {
     toeSize: number;
     boardSize: number;
@@ -15,6 +16,8 @@ const Checkerboard: React.FC<BoardProps> = ({ boardSize, toeSize }) => {
     const [history, setHistory] = useState([initSquares]); //历史步骤
 
     const [times, setTimes] = useState(0); //走的次数
+    const [curRowIndex, setCurRowIndex] = useState(0);
+    const [curColIndex, setCurColIndex] = useState(0);
     const [nextUser, setNextUser] = useState(''); //下一个玩家
     const [winner, setWinner] = useState(''); //赢家
 
@@ -61,7 +64,8 @@ const Checkerboard: React.FC<BoardProps> = ({ boardSize, toeSize }) => {
             )
         );
         newSquares[rowIndex][colIndex] = item;
-
+        setCurColIndex(colIndex);
+        setCurRowIndex(rowIndex);
         const newHistory = history.slice(0, times + 1);
         setHistory([...newHistory, newSquares]);
 
@@ -94,61 +98,32 @@ const Checkerboard: React.FC<BoardProps> = ({ boardSize, toeSize }) => {
                     </select>
                 </div>
             </div>
-            <div className="gameBoard flex-cc">
-                <table
-                    style={{
-                        border: '1px solid #000',
-                        borderCollapse: 'collapse',
-                        backgroundColor: 'lightgray',
-                    }}
-                >
-                    <tbody>
-                        {squares.map((row, rowIndex) => {
-                            return (
-                                <tr key={rowIndex}>
-                                    {row.map((col, colIndex) => {
-                                        return (
-                                            <td
-                                                key={colIndex}
-                                                style={{
-                                                    border: '1px solid #000',
-                                                    width: `${350 / boardSize}px`,
-                                                    height: `${350 / boardSize}px`,
-                                                }}
-                                                onClick={() =>
-                                                    handleClick(
-                                                        rowIndex,
-                                                        colIndex,
-                                                        winner
-                                                    )
-                                                }
-                                            >
-                                                {col === 'white' ||
-                                                col === 'black' ? (
-                                                    <div
-                                                        style={{
-                                                            width: '100%',
-                                                            height: '100%',
-                                                            backgroundColor:
-                                                                col,
-                                                            borderRadius: '50%',
-                                                            position:
-                                                                'relative',
-                                                        }}
-                                                    ></div>
-                                                ) : (
-                                                    <div className="fs-30">
-                                                        {col}
-                                                    </div>
-                                                )}
-                                            </td>
-                                        );
-                                    })}
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
+            <div
+                className="gameBoard grid gap-0"
+                style={{
+                    gridTemplateColumns: `repeat(${boardSize}, ${350 / boardSize}px)`,
+                    gridTemplateRows: `repeat(${boardSize}, ${350 / boardSize}px)`,
+                }}
+            >
+                {squares.flat().map((value, index) => {
+                    const rowIndex = Math.floor(index / boardSize);
+                    const colIndex = index % boardSize;
+
+                    return (
+                        <Square
+                            key={`${rowIndex}-${colIndex}`}
+                            value={value}
+                            isCur={
+                                rowIndex === curRowIndex &&
+                                colIndex === curColIndex
+                            }
+                            squareClick={() =>
+                                handleClick(rowIndex, colIndex, winner)
+                            }
+                            size={350 / boardSize}
+                        />
+                    );
+                })}
             </div>
             <GameInfo
                 nextUser={nextUser}
