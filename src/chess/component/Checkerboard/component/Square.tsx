@@ -10,7 +10,7 @@ interface SquareProps {
 const Square: React.FC<SquareProps> = ({ value, size, isCur, squareClick }) => {
     return (
         <div
-            className="square cursor-pointer"
+            className="square cursor-pointer bg-cTextL5"
             style={{
                 width: size,
                 height: size,
@@ -18,7 +18,6 @@ const Square: React.FC<SquareProps> = ({ value, size, isCur, squareClick }) => {
                 alignItems: 'center',
                 justifyContent: 'center',
                 border: '1px solid #000',
-                backgroundColor: 'lightgray',
             }}
             onClick={squareClick}
         >

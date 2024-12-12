@@ -1,5 +1,5 @@
 .square:hover {
-    background-color: rgb(21, 55, 84);
+    background-color: rgb(192, 192, 192);
 }
 .square:active {
     opacity: 0.8;

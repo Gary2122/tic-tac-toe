@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { calculateWinner } from '../../../tools/calculateWinner';
 import GameInfo from './component/GameInfo';
 import Square from './component/Square';
+
 interface BoardProps {
     toeSize: number;
     boardSize: number;
