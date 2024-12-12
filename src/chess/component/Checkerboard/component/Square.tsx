@@ -6,7 +6,9 @@ interface SquareProps {
     isCur: boolean;
     squareClick: () => void;
 }
-
+/**
+ * 棋子部分
+ */
 const Square: React.FC<SquareProps> = ({ value, size, isCur, squareClick }) => {
     return (
         <div

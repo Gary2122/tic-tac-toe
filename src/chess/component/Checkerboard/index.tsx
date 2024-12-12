@@ -7,31 +7,36 @@ interface BoardProps {
     toeSize: number;
     boardSize: number;
 }
-
+/**
+ * 棋盘部分
+ */
 const Checkerboard: React.FC<BoardProps> = ({ boardSize, toeSize }) => {
     const initSquares = Array.from({ length: boardSize }, () =>
         new Array(boardSize).fill('')
     );
 
     const [squares, setSquares] = useState(initSquares);
-    const [history, setHistory] = useState([initSquares]); //历史步骤
-
-    const [times, setTimes] = useState(0); //走的次数
+    const [history, setHistory] = useState([initSquares]);
+    const [times, setTimes] = useState(0);
     const [curRowIndex, setCurRowIndex] = useState(0);
     const [curColIndex, setCurColIndex] = useState(0);
-    const [nextUser, setNextUser] = useState(''); //下一个玩家
-    const [winner, setWinner] = useState(''); //赢家
+    const [nextUser, setNextUser] = useState('');
+    const [winner, setWinner] = useState('');
 
+    /**
+     * 重置游戏
+     */
     const resetGame = () => {
-        //重新开始游戏
         setWinner('');
         setTimes(0);
         setSquares(initSquares);
         setHistory([initSquares]);
     };
 
+    /**
+     * 跳转到指定步骤
+     */
     const jumpToStep = (step: number) => {
-        //跳到指定步骤
         setSquares(history[step]);
         setTimes(step);
         setWinner('');
@@ -45,12 +50,15 @@ const Checkerboard: React.FC<BoardProps> = ({ boardSize, toeSize }) => {
         if (boardSize !== 3) setNextUser(times % 2 === 0 ? 'Black' : 'White');
         else setNextUser(times % 2 === 0 ? 'X' : 'O');
     }, [times, boardSize]);
+    /**
+     * 鼠标点击事件
+     */
     const handleClick = (
         rowIndex: number,
         colIndex: number,
         winner: string
     ) => {
-        //鼠标点击事件
+        // 鼠标点击事件
         if (winner) return;
         let item = squares[rowIndex][colIndex];
         if (item !== '') return;
@@ -60,10 +68,11 @@ const Checkerboard: React.FC<BoardProps> = ({ boardSize, toeSize }) => {
             item = boardSize !== 3 ? 'white' : 'O';
         }
         const newSquares = squares.map((row, rIndex) =>
-            row.map((col, cIndex) =>
-                rIndex === rowIndex && cIndex === colIndex ? item : col
-            )
+            row.map((col, cIndex) => {
+                return rIndex === rowIndex && cIndex === colIndex ? item : col; // 确保返回值
+            })
         );
+        const gameWinner = calculateWinner(newSquares, toeSize);
         newSquares[rowIndex][colIndex] = item;
         setCurColIndex(colIndex);
         setCurRowIndex(rowIndex);
@@ -73,10 +82,9 @@ const Checkerboard: React.FC<BoardProps> = ({ boardSize, toeSize }) => {
         setTimes(times + 1);
         setSquares(newSquares);
 
-        const gameWinner = calculateWinner(newSquares, toeSize);
         if (gameWinner) {
             setWinner(gameWinner);
-        } else if (times === boardSize * boardSize - 1) {
+        } else if (times === boardSize * (boardSize - 1)) {
             setWinner('Draw');
         }
     };
@@ -87,11 +95,13 @@ const Checkerboard: React.FC<BoardProps> = ({ boardSize, toeSize }) => {
                 <div className="mb-20">
                     <label>跳转到步骤：</label>
                     <select
-                        onChange={(e) => jumpToStep(Number(e.target.value))}
+                        onChange={(event) =>
+                            jumpToStep(Number(event.target.value))
+                        }
                         value={times}
                         name="selectHistory"
                     >
-                        {history.map((_, index) => (
+                        {history.map((__, index) => (
                             <option key={index} value={index}>
                                 第 {index} 步
                             </option>

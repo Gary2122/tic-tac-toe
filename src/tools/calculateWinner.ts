@@ -1,10 +1,17 @@
+/**
+ * 计算胜利者
+ * @param squares 棋盘
+ * @param winCondition 胜利条件
+ */
 export const calculateWinner = (
     squares: Array<Array<string>>,
     winCondition: number // 胜利条件
 ): string | null => {
     const size = squares.length; // 棋盘大小
 
-    //f(x)
+    /**
+     * 方向计算
+     */
     const checkDirection = (
         startX: number,
         startY: number,
@@ -15,15 +22,15 @@ export const calculateWinner = (
         if (!player) return false;
 
         for (let step = 1; step < winCondition; step++) {
-            const x = startX + deltaX * step;
-            const y = startY + deltaY * step;
+            const index_x = startX + deltaX * step;
+            const index_y = startY + deltaY * step;
 
             if (
-                x < 0 ||
-                x >= size ||
-                y < 0 ||
-                y >= size ||
-                squares[x][y] !== player
+                index_x < 0 ||
+                index_x >= size ||
+                index_y < 0 ||
+                index_y >= size ||
+                squares[index_x][index_y] !== player
             ) {
                 return false;
             }
@@ -31,15 +38,15 @@ export const calculateWinner = (
         return true;
     };
 
-    for (let i = 0; i < size; i++) {
-        for (let j = 0; j < size; j++) {
+    for (let row_i = 0; row_i < size; row_i++) {
+        for (let col_j = 0; col_j < size; col_j++) {
             if (
-                checkDirection(i, j, 1, 0) || // 检查横向
-                checkDirection(i, j, 0, 1) || // 检查纵向
-                checkDirection(i, j, 1, 1) || // 检查右下对角线
-                checkDirection(i, j, 1, -1) // 检查左下对角线
+                checkDirection(row_i, col_j, 1, 0) || // 检查横向
+                checkDirection(row_i, col_j, 0, 1) || // 检查纵向
+                checkDirection(row_i, col_j, 1, 1) || // 检查右下对角线
+                checkDirection(row_i, col_j, 1, -1) // 检查左下对角线
             ) {
-                return squares[i][j];
+                return squares[row_i][col_j];
             }
         }
     }

@@ -40,9 +40,7 @@ const customTheme = {
 };
 
 export default defineConfig({
-    theme: {
-        ...customTheme,
-    },
+    theme: { ...customTheme },
     rules: [
         [
             /^(\w{0,1})flex-(\w{1})(\w{1})(\w{0,2})$/,
@@ -91,8 +89,7 @@ export default defineConfig({
         [
             /^bg-(\w+)$/,
             ([, c], { theme }) => {
-                if (customTheme.colors[c])
-                    return { 'background-color': theme.colors[c] };
+                if (customTheme.colors[c]) return { 'background-color': theme.colors[c] };
             },
         ],
         [
@@ -101,34 +98,25 @@ export default defineConfig({
                 const [c, d, t] = word.split('_');
                 const matches = (d || '').match(/\d+/);
                 const extractedNumber = matches ? parseInt(matches[0], 10) : 1;
-                if (customTheme.colors[c])
-                    return {
-                        border: `${extractedNumber}px ${t || 'solid'} ${theme.colors[c]}`,
-                    };
+                if (customTheme.colors[c]) return { border: `${extractedNumber}px ${t || 'solid'} ${theme.colors[c]}` };
             },
         ],
         [
             /^fs-(\d+)$/,
             ([, d]) => {
-                return {
-                    'font-size': `${d}px`,
-                };
+                return { 'font-size': `${d}px` };
             },
         ],
         [
             /^g-(\d+)$/,
             ([, d]) => {
-                return {
-                    gap: `${d}px`,
-                };
+                return { gap: `${d}px` };
             },
         ],
         [
             /^br-(\d+)$/,
             ([, d]) => {
-                return {
-                    'border-radius': `${d}px !important`,
-                };
+                return { 'border-radius': `${d}px !important` };
             },
         ],
     ],
@@ -142,7 +130,7 @@ export default defineConfig({
             provider: 'google', // 默认提供者
             fonts: {},
         }),
-        presetRemToPx({ baseFontSize: 4 }), //px单位
+        presetRemToPx({ baseFontSize: 4 }), // px单位
     ],
     transformers: [
         transformerDirectives({ throwOnMissing: true, enforce: 'default' }),

@@ -5,8 +5,13 @@ interface GameInfoProps {
     winner: string;
     resetGame: () => void;
 }
-
+/**
+ * 游戏信息
+ */
 const GameInfo: React.FC<GameInfoProps> = ({ nextUser, winner, resetGame }) => {
+    /**
+     * 棋子点击事件
+     */
     const handleClick = () => {
         resetGame();
     };
