@@ -13,6 +13,8 @@ module.exports = {
     parser: '@typescript-eslint/parser',
     plugins: ['react', '@typescript-eslint', 'prettier'],
     rules: {
+        'no-unused-vars': 'off',
+        'react/display-name': 'off',
         'prettier/prettier': 'error', // 确保 Prettier 的规则作为 ESLint 错误处理
         // 可以添加你自定义的 ESLint 规则
     },

@@ -18,7 +18,8 @@ export default defineConfig({
         }),
     ],
     resolve: {
-        alias: { '@': path.resolve(__dirname, 'src'), // 设置 `@` 指向 `src` 目录
+        alias: {
+            '@': path.resolve(__dirname, 'src'), // 设置 `@` 指向 `src` 目录
         },
     },
 });

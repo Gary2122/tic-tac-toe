@@ -89,7 +89,8 @@ export default defineConfig({
         [
             /^bg-(\w+)$/,
             ([, c], { theme }) => {
-                if (customTheme.colors[c]) return { 'background-color': theme.colors[c] };
+                if (customTheme.colors[c])
+                    return { 'background-color': theme.colors[c] };
             },
         ],
         [
@@ -98,7 +99,10 @@ export default defineConfig({
                 const [c, d, t] = word.split('_');
                 const matches = (d || '').match(/\d+/);
                 const extractedNumber = matches ? parseInt(matches[0], 10) : 1;
-                if (customTheme.colors[c]) return { border: `${extractedNumber}px ${t || 'solid'} ${theme.colors[c]}` };
+                if (customTheme.colors[c])
+                    return {
+                        border: `${extractedNumber}px ${t || 'solid'} ${theme.colors[c]}`,
+                    };
             },
         ],
         [

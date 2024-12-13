@@ -4,14 +4,21 @@ interface SquareProps {
     value: string;
     size: number;
     isCur: boolean;
-    squareClick: () => void;
+    rowIndex: number;
+    colIndex: number;
+    squareClick: (rowIndex: number, colIndex: number) => void;
 }
 /**
  * 棋子部分
  */
 const Square: React.FC<SquareProps> = React.memo(
-    ({ value, size, isCur, squareClick }: SquareProps) => {
-        console.warn('渲染了');
+    ({ value, size, isCur, rowIndex, colIndex, squareClick }: SquareProps) => {
+        /**
+         * 鼠标点击事件
+         */
+        const handleClick = (rowIndex: number, colIndex: number) => {
+            squareClick(rowIndex, colIndex);
+        };
         return (
             <div
                 className="square cursor-pointer bg-gray"
@@ -23,7 +30,7 @@ const Square: React.FC<SquareProps> = React.memo(
                     justifyContent: 'center',
                     border: '1px solid #000',
                 }}
-                onClick={squareClick}
+                onClick={() => handleClick(rowIndex, colIndex)}
             >
                 {value === 'white' || value === 'black' ? (
                     <div
@@ -53,5 +60,4 @@ const Square: React.FC<SquareProps> = React.memo(
         );
     }
 );
-
 export default Square;
