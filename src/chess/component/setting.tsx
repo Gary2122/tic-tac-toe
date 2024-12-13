@@ -7,7 +7,13 @@ interface SettingProps {
     isfive: boolean;
     setIsfive: (value: boolean) => void;
 }
+/**
+ * 设置页面
+ */
 const Setting: React.FC<SettingProps> = ({ isfive, setIsfive }) => {
+    /**
+     * 单选框点击事件
+     */
     const handleRadioClick = (value: boolean) => {
         setIsfive(value);
     };
