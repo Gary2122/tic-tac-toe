@@ -9,28 +9,32 @@ interface ChildComponentProps {
 /**
  * 子组件，使用 React.memo() 避免不必要的重新渲染
  */
-const ChildComponent: React.FC<ChildComponentProps> = React.memo(
-    ({ count, onClick }: ChildComponentProps) => {
-        /**
-         * 点击事件
-         */
-        const handleClick = () => {
-            onClick();
-        };
+const ChildComponent: React.FC<ChildComponentProps> = ({
+    count,
+    onClick,
+}: ChildComponentProps) => {
+    console.log('ChildComponent rendered');
+    /**
+     * 点击事件
+     */
+    const handleClick = () => {
+        onClick();
+    };
 
-        return (
-            <div>
-                <p>Count: {count}</p>
-                <p onClick={handleClick}>Click me to call onClick</p>
-            </div>
-        );
-    }
-);
+    return (
+        <div>
+            <p>Count: {count}</p>
+            {/* <p onClick={handleClick}>Click me to call onClick</p> */}
+        </div>
+    );
+};
 
 /**
  * 父组件，确保传递给子组件的 props 引用稳定
  */
 const ParentComponent = () => {
+    console.log('ParentComponent rendered');
+
     const [count, setCount] = useState(0);
     const [count1, setCount1] = useState(0);
 
@@ -40,7 +44,7 @@ const ParentComponent = () => {
     }, []);
 
     const handleClick1 = useCallback(() => {
-        setCount((prevCount) => prevCount + 1);
+        setCount1((prevCount) => prevCount + 1);
     }, []);
 
     return (
