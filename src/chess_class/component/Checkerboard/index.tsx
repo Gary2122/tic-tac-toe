@@ -10,7 +10,7 @@ import {
     resetHistory,
     setWinner,
     resetLocation,
-    setCurToeLoaction,
+    // setCurToeLoaction,
 } from '../../../store/modules/ChessState';
 
 interface BoardProps {
@@ -179,7 +179,7 @@ class Checkerboard extends React.Component<BoardProps, BoardState> {
                                 isCur={false}
                                 rowIndex={rowIndex}
                                 colIndex={colIndex}
-                                squareClick={this.onSquareClick}
+                                // squareClick={this.onSquareClick}
                                 size={
                                     chessConfig.boardSize.boardHeight /
                                     gameConfig.boardNum
@@ -215,7 +215,7 @@ const mapDispatchToProps = {
     setHistory,
     resetHistory,
     setWinner,
-    setCurToeLoaction,
+    // setCurToeLoaction,
     resetLocation,
 };
 

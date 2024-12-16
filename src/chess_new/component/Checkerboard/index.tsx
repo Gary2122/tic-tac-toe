@@ -4,7 +4,6 @@ import { calculateWinner } from '../../../tools/calculateWinner';
 import { chessConfig } from '../../config/config';
 import GameInfo from './component/GameInfo';
 import Square from './component/Square';
-
 import {
     setHistory,
     resetHistory,
@@ -130,7 +129,6 @@ const Checkerboard: React.FC<BoardProps> = ({ gameConfig }: BoardProps) => {
             <div className="historyBox">
                 <div className="mb-20">
                     <label>跳转到步骤：</label>
-                    {/* <ParentComponent></ParentComponent> */}
                     <select
                         onChange={(event) =>
                             jumpToStep(Number(event.target.value))

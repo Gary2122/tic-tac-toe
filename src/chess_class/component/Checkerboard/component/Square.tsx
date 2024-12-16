@@ -1,12 +1,18 @@
 import React from 'react';
 import '../../../../css/square.css';
+import { connect } from 'react-redux';
+import { setCurToeLoaction } from '../../../../store/modules/ChessState';
 interface SquareProps {
     value: string;
     size: number;
     isCur: boolean;
     rowIndex: number;
     colIndex: number;
-    squareClick: (rowIndex: number, colIndex: number) => void;
+    // squareClick: (rowIndex: number, colIndex: number) => void;
+    setCurToeLoaction: (location: {
+        rowIndex: number;
+        colIndex: number;
+    }) => void;
 }
 interface SquareState {
     isCur: boolean;
@@ -32,7 +38,11 @@ class Square extends React.Component<SquareProps, SquareState> {
      * 鼠标点击事件
      */
     handleClick = (rowIndex: number, colIndex: number) => {
-        this.props.squareClick(rowIndex, colIndex);
+        // this.props.squareClick(rowIndex, colIndex);
+        this.props.setCurToeLoaction({
+            rowIndex,
+            colIndex,
+        });
     };
 
     render() {
@@ -78,4 +88,22 @@ class Square extends React.Component<SquareProps, SquareState> {
         );
     }
 }
-export default Square;
+/**
+ * 将 state 映射到 props
+ */
+const mapStateToProps = (state: {
+    chess: {
+        curRowIndex: number;
+        curColIndex: number;
+    };
+}) => ({
+    curRowIndex: state.chess.curRowIndex,
+    curColIndex: state.chess.curColIndex,
+});
+/**
+ * 将 state 映射到 props
+ */
+const mapDispatchToProps = {
+    setCurToeLoaction,
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Square);
