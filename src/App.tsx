@@ -1,6 +1,7 @@
 /* eslint-disable @netsells/require-jsdoc-except/require-jsdoc */
 import './App.css';
 // import GameIndex from './chess/GameIndex';
+// import GameIndex2 from './chess_new';
 import GameIndex2 from './chess_class';
 import React from 'react';
 /**

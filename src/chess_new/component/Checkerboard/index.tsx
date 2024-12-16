@@ -3,7 +3,13 @@ import { calculateWinner } from '../../../tools/calculateWinner';
 import { chessConfig } from '../../config/config';
 import GameInfo from './component/GameInfo';
 import Square from './component/Square';
-// import ParentComponent from './component/ParentComponent';
+import { useSelector, useDispatch } from 'react-redux';
+
+import {
+    setHistory,
+    resetHistory,
+    setWinner,
+} from '../../../store/modules/ChessState';
 interface BoardProps {
     gameConfig: {
         label: string;
@@ -19,27 +25,37 @@ interface BoardProps {
  * 棋盘部分
  */
 const Checkerboard: React.FC<BoardProps> = ({ gameConfig }: BoardProps) => {
-    const initSquares = Array.from({ length: gameConfig.boardNum }, () =>
-        new Array(gameConfig.boardNum).fill('')
+    const dispatch = useDispatch();
+    const chessState = useSelector(
+        (store: {
+            chess: {
+                winner: string;
+                history: string[][][]; // history 的类型
+            };
+        }) => store.chess
     );
 
     const [curRowIndex, setCurRowIndex] = useState(-1);
     const [curColIndex, setCurColIndex] = useState(-1);
-    // const [temp, setTemp] = useState(0);
-    const [squares, setSquares] = useState(initSquares);
-    const [history, setHistory] = useState([initSquares]);
-    const [winner, setWinner] = useState('');
 
-    // const handleClick2 = () => {
-    //     setTemp(temp + 1);
-    // };
+    useEffect(() => {
+        // 初始化棋盘
+        dispatch(resetHistory(gameConfig.boardNum));
+    }, [gameConfig.boardNum, dispatch]);
+
+    useEffect(() => {
+        // 下棋后更新curRowIndex和curColIndex
+        handleClick(curRowIndex, curColIndex);
+    }, [curRowIndex, curColIndex]);
+
+    const squares = chessState.history[chessState.history.length - 1];
+    const nextUser = gameConfig.toes[chessState.history.length % 2];
     /**
      * 重置游戏
      */
     const resetGame = () => {
-        setWinner('');
-        setSquares(initSquares);
-        setHistory([initSquares]);
+        dispatch(setWinner(''));
+        dispatch(resetHistory(gameConfig.boardNum));
         setCurRowIndex(-1);
         setCurColIndex(-1);
     };
@@ -48,14 +64,12 @@ const Checkerboard: React.FC<BoardProps> = ({ gameConfig }: BoardProps) => {
      * 跳转到指定步骤
      */
     const jumpToStep = (step: number) => {
-        setSquares(history[step]);
-        setHistory((prevHistory) => prevHistory.slice(0, step + 1));
-        setWinner('');
+        dispatch(setHistory(chessState.history.slice(0, step + 1)));
+        dispatch(setWinner(''));
         setCurRowIndex(-1);
         setCurColIndex(-1);
     };
 
-    const nextUser = gameConfig.toes[history.length % 2];
     /**
      * onSquareClick
      */
@@ -69,15 +83,13 @@ const Checkerboard: React.FC<BoardProps> = ({ gameConfig }: BoardProps) => {
      */
     const adjustSquares = (rowIndex: number, colIndex: number) => {
         if (rowIndex === -1 || colIndex === -1) return;
-        if (winner || squares[rowIndex][colIndex] !== '') return;
+        if (chessState.winner || squares[rowIndex][colIndex] !== '') return;
         const newSquares = squares.map((row, rIndex) =>
             row.map((col, cIndex) =>
                 rIndex === rowIndex && cIndex === colIndex ? nextUser : col
             )
         );
-        setSquares(newSquares);
-        setHistory((prevHistory) => [...prevHistory, newSquares]);
-
+        dispatch(setHistory([...chessState.history, newSquares]));
         return newSquares;
     };
 
@@ -97,12 +109,12 @@ const Checkerboard: React.FC<BoardProps> = ({ gameConfig }: BoardProps) => {
             colIndex
         );
         if (gameWinner) {
-            setWinner(gameWinner);
+            dispatch(setWinner(gameWinner));
         } else if (
             history.length ===
             gameConfig.boardNum * gameConfig.boardNum - 1
         ) {
-            setWinner('Draw');
+            dispatch(setWinner('Draw'));
         }
     };
     /**
@@ -114,9 +126,6 @@ const Checkerboard: React.FC<BoardProps> = ({ gameConfig }: BoardProps) => {
         judgeWinner(newSquares, gameConfig.winCondition, rowIndex, colIndex);
     };
 
-    useEffect(() => {
-        handleClick(curRowIndex, curColIndex);
-    }, [curRowIndex, curColIndex]);
     return (
         <div>
             <div className="historyBox">
@@ -127,10 +136,10 @@ const Checkerboard: React.FC<BoardProps> = ({ gameConfig }: BoardProps) => {
                         onChange={(event) =>
                             jumpToStep(Number(event.target.value))
                         }
-                        value={history.length - 1}
+                        value={chessState.history.length - 1}
                         name="selectHistory"
                     >
-                        {history.map((__, index) => (
+                        {chessState.history.map((__, index) => (
                             <option key={index} value={index}>
                                 第 {index} 步
                             </option>
@@ -163,13 +172,22 @@ const Checkerboard: React.FC<BoardProps> = ({ gameConfig }: BoardProps) => {
                     ))
                 )}
             </div>
-            <GameInfo
-                nextUser={nextUser}
-                winner={winner}
-                resetGame={resetGame}
-            />
+            <GameInfo nextUser={nextUser} resetGame={resetGame} />
         </div>
     );
 };
 
 export default Checkerboard;
+// import ParentComponent from './component/ParentComponent';
+// const initSquares = Array.from({ length: gameConfig.boardNum }, () =>
+//     new Array(gameConfig.boardNum).fill('')
+// );
+// const [squares, setSquares] = useState(initSquares);
+// const [history, setHistory] = useState([initSquares]);
+// const [winner, setWinner] = useState('');
+// setSquares(initSquares);resetGame
+// setHistory([initSquares]);resetGame
+// setSquares(chessState.history[step]);jumpToStep
+// setHistory((prevHistory) => prevHistory.slice(0, step + 1));jumpToStep
+// setSquares(newSquares);adjustSquares
+// setHistory((prevHistory) => [...prevHistory, newSquares]);adjustSquares
