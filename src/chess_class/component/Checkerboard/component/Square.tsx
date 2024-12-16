@@ -17,9 +17,16 @@ interface SquareState {
 class Square extends React.Component<SquareProps, SquareState> {
     constructor(props: SquareProps) {
         super(props);
-        this.state = {
-            isCur: props.isCur,
-        };
+    }
+    // 只在 value, size, isCur 或 rowIndex, colIndex 变化时重新渲染
+    shouldComponentUpdate(nextProps: SquareProps) {
+        return (
+            nextProps.value !== this.props.value ||
+            nextProps.size !== this.props.size ||
+            nextProps.isCur !== this.props.isCur ||
+            nextProps.rowIndex !== this.props.rowIndex ||
+            nextProps.colIndex !== this.props.colIndex
+        );
     }
     /**
      * 鼠标点击事件

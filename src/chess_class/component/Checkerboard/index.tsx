@@ -4,12 +4,13 @@ import { chessConfig } from '../../config/config';
 import GameInfo from './component/GameInfo';
 import Square from './component/Square';
 
-// import React from 'react';
 import { connect } from 'react-redux';
 import {
     setHistory,
     resetHistory,
     setWinner,
+    resetLocation,
+    setCurToeLoaction,
 } from '../../../store/modules/ChessState';
 
 interface BoardProps {
@@ -24,10 +25,17 @@ interface BoardProps {
     chessState: {
         winner: string;
         history: string[][][];
+        curRowIndex: number;
+        curColIndex: number;
     };
-    setHistory: (history: string[][][]) => void;
-    resetHistory: (boardNum: number) => void;
     setWinner: (winner: string) => void;
+    setHistory: (history: string[][][]) => void;
+    setCurToeLoaction: (location: {
+        rowIndex: number;
+        colIndex: number;
+    }) => void;
+    resetLocation: () => void;
+    resetHistory: (boardNum: number) => void;
 }
 
 interface BoardState {
@@ -38,41 +46,36 @@ interface BoardState {
 class Checkerboard extends React.Component<BoardProps, BoardState> {
     constructor(props: BoardProps) {
         super(props);
-        this.state = {
-            curRowIndex: -1,
-            curColIndex: -1,
-        };
     }
     /**
      * 初始化棋盘
      */
     componentDidMount() {
         this.props.resetHistory(this.props.gameConfig.boardNum);
+        this.props.resetLocation();
+        this.props.setWinner('');
     }
     /**
      * 下棋后更新curRowIndex和curColIndex
      */
-    componentDidUpdate(_prevProps: BoardProps, prevState: BoardState) {
-        if (
-            this.state.curRowIndex !== prevState.curRowIndex ||
-            this.state.curColIndex !== prevState.curColIndex
-        ) {
-            this.handleClick(this.state.curRowIndex, this.state.curColIndex);
-        }
+    componentDidUpdate() {
+        const { chessState } = this.props;
+        this.handleClick(chessState.curRowIndex, chessState.curColIndex);
     }
 
     resetGame = () => {
-        const { resetHistory, setWinner, gameConfig } = this.props;
+        const { resetHistory, setWinner, gameConfig, resetLocation } =
+            this.props;
         setWinner('');
         resetHistory(gameConfig.boardNum);
-        this.setState({ curRowIndex: -1, curColIndex: -1 });
+        resetLocation();
     };
 
     jumpToStep = (step: number) => {
-        const { setHistory, setWinner, chessState } = this.props;
+        const { chessState, setHistory, setWinner, resetLocation } = this.props;
         setHistory(chessState.history.slice(0, step + 1));
         setWinner('');
-        this.setState({ curRowIndex: -1, curColIndex: -1 });
+        resetLocation();
     };
 
     adjustSquares = (rowIndex: number, colIndex: number) => {
@@ -129,7 +132,11 @@ class Checkerboard extends React.Component<BoardProps, BoardState> {
     };
 
     onSquareClick = (rowIndex: number, colIndex: number) => {
-        this.setState({ curRowIndex: rowIndex, curColIndex: colIndex });
+        const { setCurToeLoaction } = this.props;
+        setCurToeLoaction({
+            rowIndex,
+            colIndex,
+        });
     };
 
     render() {
@@ -197,6 +204,8 @@ const mapStateToProps = (state: {
     chess: {
         winner: string;
         history: string[][][];
+        curRowIndex: number;
+        curColIndex: number;
     };
 }) => ({
     chessState: state.chess,
@@ -206,6 +215,8 @@ const mapDispatchToProps = {
     setHistory,
     resetHistory,
     setWinner,
+    setCurToeLoaction,
+    resetLocation,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Checkerboard);

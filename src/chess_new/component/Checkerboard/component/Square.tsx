@@ -2,8 +2,9 @@ import React from 'react';
 import '../../../../css/square.css';
 import { useDispatch } from 'react-redux';
 import {
-    setCurColIndex,
-    setCurRowIndex,
+    // setCurColIndex,
+    // setCurRowIndex,
+    setCurToeLoaction,
 } from '../../../../store/modules/ChessState';
 interface SquareProps {
     value: string;
@@ -18,14 +19,12 @@ interface SquareProps {
  */
 const Square: React.FC<SquareProps> = React.memo(
     ({ value, size, rowIndex, colIndex, isCur }: SquareProps) => {
-        console.log('square render');
         const dispatch = useDispatch();
         /**
          * 鼠标点击事件
          */
         const handleClick = (rowIndex: number, colIndex: number) => {
-            dispatch(setCurRowIndex(rowIndex));
-            dispatch(setCurColIndex(colIndex));
+            dispatch(setCurToeLoaction({ rowIndex, colIndex }));
         };
         return (
             <div

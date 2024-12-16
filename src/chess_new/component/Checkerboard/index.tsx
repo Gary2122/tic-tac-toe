@@ -42,6 +42,8 @@ const Checkerboard: React.FC<BoardProps> = ({ gameConfig }: BoardProps) => {
     useEffect(() => {
         // 初始化棋盘
         dispatch(resetHistory(gameConfig.boardNum));
+        dispatch(resetLocation());
+        dispatch(setWinner(''));
     }, [gameConfig.boardNum, dispatch]);
 
     useEffect(() => {
@@ -64,6 +66,10 @@ const Checkerboard: React.FC<BoardProps> = ({ gameConfig }: BoardProps) => {
      * 跳转到指定步骤
      */
     const jumpToStep = (step: number) => {
+        if (step === 0) {
+            resetGame();
+            return;
+        }
         dispatch(setHistory(chessState.history.slice(0, step + 1)));
         dispatch(setWinner(''));
         dispatch(resetLocation());
@@ -81,6 +87,7 @@ const Checkerboard: React.FC<BoardProps> = ({ gameConfig }: BoardProps) => {
                 rIndex === rowIndex && cIndex === colIndex ? nextUser : col
             )
         );
+        // dispatch(setLocation({ rowIndex, colIndex }));
         dispatch(setHistory([...chessState.history, newSquares]));
         return newSquares;
     };
@@ -103,8 +110,8 @@ const Checkerboard: React.FC<BoardProps> = ({ gameConfig }: BoardProps) => {
         if (gameWinner) {
             dispatch(setWinner(gameWinner));
         } else if (
-            history.length ===
-            gameConfig.boardNum * gameConfig.boardNum - 1
+            chessState.history.length ===
+            gameConfig.boardNum * gameConfig.boardNum
         ) {
             dispatch(setWinner('Draw'));
         }
@@ -151,10 +158,7 @@ const Checkerboard: React.FC<BoardProps> = ({ gameConfig }: BoardProps) => {
                         <Square
                             key={`${rowIndex}-${colIndex}`}
                             value={value}
-                            isCur={
-                                chessState.curRowIndex === rowIndex &&
-                                chessState.curColIndex === colIndex
-                            }
+                            isCur={false}
                             rowIndex={rowIndex}
                             colIndex={colIndex}
                             size={
