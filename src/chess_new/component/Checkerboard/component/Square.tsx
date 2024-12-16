@@ -1,23 +1,31 @@
 import React from 'react';
 import '../../../../css/square.css';
+import { useDispatch } from 'react-redux';
+import {
+    setCurColIndex,
+    setCurRowIndex,
+} from '../../../../store/modules/ChessState';
 interface SquareProps {
     value: string;
     size: number;
     isCur: boolean;
     rowIndex: number;
     colIndex: number;
-    squareClick: (rowIndex: number, colIndex: number) => void;
+    // squareClick: (rowIndex: number, colIndex: number) => void;
 }
 /**
  * 棋子部分
  */
 const Square: React.FC<SquareProps> = React.memo(
-    ({ value, size, isCur, rowIndex, colIndex, squareClick }: SquareProps) => {
+    ({ value, size, rowIndex, colIndex, isCur }: SquareProps) => {
+        console.log('square render');
+        const dispatch = useDispatch();
         /**
          * 鼠标点击事件
          */
         const handleClick = (rowIndex: number, colIndex: number) => {
-            squareClick(rowIndex, colIndex);
+            dispatch(setCurRowIndex(rowIndex));
+            dispatch(setCurColIndex(colIndex));
         };
         return (
             <div

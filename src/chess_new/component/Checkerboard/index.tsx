@@ -1,14 +1,15 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { calculateWinner } from '../../../tools/calculateWinner';
 import { chessConfig } from '../../config/config';
 import GameInfo from './component/GameInfo';
 import Square from './component/Square';
-import { useSelector, useDispatch } from 'react-redux';
 
 import {
     setHistory,
     resetHistory,
     setWinner,
+    resetLocation,
 } from '../../../store/modules/ChessState';
 interface BoardProps {
     gameConfig: {
@@ -25,18 +26,18 @@ interface BoardProps {
  * 棋盘部分
  */
 const Checkerboard: React.FC<BoardProps> = ({ gameConfig }: BoardProps) => {
+    // console.log('parent render');
     const dispatch = useDispatch();
     const chessState = useSelector(
         (store: {
             chess: {
                 winner: string;
                 history: string[][][]; // history 的类型
+                curRowIndex: number;
+                curColIndex: number;
             };
         }) => store.chess
     );
-
-    const [curRowIndex, setCurRowIndex] = useState(-1);
-    const [curColIndex, setCurColIndex] = useState(-1);
 
     useEffect(() => {
         // 初始化棋盘
@@ -45,8 +46,8 @@ const Checkerboard: React.FC<BoardProps> = ({ gameConfig }: BoardProps) => {
 
     useEffect(() => {
         // 下棋后更新curRowIndex和curColIndex
-        handleClick(curRowIndex, curColIndex);
-    }, [curRowIndex, curColIndex]);
+        handleClick(chessState.curRowIndex, chessState.curColIndex);
+    }, [chessState.curRowIndex, chessState.curColIndex]);
 
     const squares = chessState.history[chessState.history.length - 1];
     const nextUser = gameConfig.toes[chessState.history.length % 2];
@@ -56,8 +57,7 @@ const Checkerboard: React.FC<BoardProps> = ({ gameConfig }: BoardProps) => {
     const resetGame = () => {
         dispatch(setWinner(''));
         dispatch(resetHistory(gameConfig.boardNum));
-        setCurRowIndex(-1);
-        setCurColIndex(-1);
+        dispatch(resetLocation());
     };
 
     /**
@@ -66,17 +66,8 @@ const Checkerboard: React.FC<BoardProps> = ({ gameConfig }: BoardProps) => {
     const jumpToStep = (step: number) => {
         dispatch(setHistory(chessState.history.slice(0, step + 1)));
         dispatch(setWinner(''));
-        setCurRowIndex(-1);
-        setCurColIndex(-1);
+        dispatch(resetLocation());
     };
-
-    /**
-     * onSquareClick
-     */
-    const onSquareClick = useCallback((rowIndex: number, colIndex: number) => {
-        setCurRowIndex(rowIndex);
-        setCurColIndex(colIndex);
-    }, []);
 
     /**
      * 下子时改变棋盘squares和history数据
@@ -84,6 +75,7 @@ const Checkerboard: React.FC<BoardProps> = ({ gameConfig }: BoardProps) => {
     const adjustSquares = (rowIndex: number, colIndex: number) => {
         if (rowIndex === -1 || colIndex === -1) return;
         if (chessState.winner || squares[rowIndex][colIndex] !== '') return;
+
         const newSquares = squares.map((row, rIndex) =>
             row.map((col, cIndex) =>
                 rIndex === rowIndex && cIndex === colIndex ? nextUser : col
@@ -147,7 +139,6 @@ const Checkerboard: React.FC<BoardProps> = ({ gameConfig }: BoardProps) => {
                     </select>
                 </div>
             </div>
-            {/* <button onClick={handleClick2}>111</button> */}
             <div
                 className="gameBoard grid gap-0"
                 style={{
@@ -160,10 +151,12 @@ const Checkerboard: React.FC<BoardProps> = ({ gameConfig }: BoardProps) => {
                         <Square
                             key={`${rowIndex}-${colIndex}`}
                             value={value}
-                            isCur={false}
+                            isCur={
+                                chessState.curRowIndex === rowIndex &&
+                                chessState.curColIndex === colIndex
+                            }
                             rowIndex={rowIndex}
                             colIndex={colIndex}
-                            squareClick={onSquareClick}
                             size={
                                 chessConfig.boardSize.boardHeight /
                                 gameConfig.boardNum
@@ -185,9 +178,18 @@ export default Checkerboard;
 // const [squares, setSquares] = useState(initSquares);
 // const [history, setHistory] = useState([initSquares]);
 // const [winner, setWinner] = useState('');
+// const [curRowIndex, setCurRowIndex] = useState(-1);
+// const [curColIndex, setCurColIndex] = useState(-1);
 // setSquares(initSquares);resetGame
 // setHistory([initSquares]);resetGame
 // setSquares(chessState.history[step]);jumpToStep
 // setHistory((prevHistory) => prevHistory.slice(0, step + 1));jumpToStep
 // setSquares(newSquares);adjustSquares
 // setHistory((prevHistory) => [...prevHistory, newSquares]);adjustSquares
+/**
+ * onSquareClick
+ */
+// const onSquareClick = useCallback((rowIndex: number, colIndex: number) => {
+//     setCurRowIndex(rowIndex);
+//     setCurColIndex(colIndex);
+// }, []);

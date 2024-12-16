@@ -52,7 +52,7 @@ class Checkerboard extends React.Component<BoardProps, BoardState> {
     /**
      * 下棋后更新curRowIndex和curColIndex
      */
-    componentDidUpdate(prevProps: BoardProps, prevState: BoardState) {
+    componentDidUpdate(_prevProps: BoardProps, prevState: BoardState) {
         if (
             this.state.curRowIndex !== prevState.curRowIndex ||
             this.state.curColIndex !== prevState.curColIndex
