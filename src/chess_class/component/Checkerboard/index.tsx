@@ -10,7 +10,6 @@ import {
     resetHistory,
     setWinner,
     resetLocation,
-    // setCurToeLoaction,
 } from '../../../store/modules/ChessState';
 
 interface BoardProps {
@@ -30,10 +29,10 @@ interface BoardProps {
     };
     setWinner: (winner: string) => void;
     setHistory: (history: string[][][]) => void;
-    setCurToeLoaction: (location: {
-        rowIndex: number;
-        colIndex: number;
-    }) => void;
+    // setCurToeLoaction: (location: {
+    //     rowIndex: number;
+    //     colIndex: number;
+    // }) => void;
     resetLocation: () => void;
     resetHistory: (boardNum: number) => void;
 }
@@ -131,13 +130,13 @@ class Checkerboard extends React.Component<BoardProps, BoardState> {
         );
     };
 
-    onSquareClick = (rowIndex: number, colIndex: number) => {
-        const { setCurToeLoaction } = this.props;
-        setCurToeLoaction({
-            rowIndex,
-            colIndex,
-        });
-    };
+    // onSquareClick = (rowIndex: number, colIndex: number) => {
+    //     const { setCurToeLoaction } = this.props;
+    //     setCurToeLoaction({
+    //         rowIndex,
+    //         colIndex,
+    //     });
+    // };
 
     render() {
         const { gameConfig, chessState } = this.props;
