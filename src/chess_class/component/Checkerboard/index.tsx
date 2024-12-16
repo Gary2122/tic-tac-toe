@@ -20,6 +20,7 @@ interface BoardProps {
         winCondition: number;
         boardNum: number;
         toes: string[];
+        isCommon: boolean;
     };
     chessState: {
         winner: string;
@@ -29,10 +30,6 @@ interface BoardProps {
     };
     setWinner: (winner: string) => void;
     setHistory: (history: string[][][]) => void;
-    // setCurToeLoaction: (location: {
-    //     rowIndex: number;
-    //     colIndex: number;
-    // }) => void;
     resetLocation: () => void;
     resetHistory: (boardNum: number) => void;
 }
@@ -178,6 +175,7 @@ class Checkerboard extends React.Component<BoardProps, BoardState> {
                                 isCur={false}
                                 rowIndex={rowIndex}
                                 colIndex={colIndex}
+                                isCommon={gameConfig.isCommon}
                                 // squareClick={this.onSquareClick}
                                 size={
                                     chessConfig.boardSize.boardHeight /

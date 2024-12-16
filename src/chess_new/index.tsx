@@ -22,6 +22,7 @@ const GameIndex: React.FC = () => {
                 winCondition: number;
                 boardNum: number;
                 toes: string[];
+                isCommon: boolean;
             }
         );
     };

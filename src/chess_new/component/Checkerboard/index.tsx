@@ -18,6 +18,7 @@ interface BoardProps {
         winCondition: number;
         boardNum: number;
         toes: string[];
+        isCommon: boolean;
     };
 }
 
@@ -157,6 +158,7 @@ const Checkerboard: React.FC<BoardProps> = ({ gameConfig }: BoardProps) => {
                             key={`${rowIndex}-${colIndex}`}
                             value={value}
                             isCur={false}
+                            isCommon={gameConfig.isCommon}
                             rowIndex={rowIndex}
                             colIndex={colIndex}
                             size={

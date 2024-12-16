@@ -34,9 +34,6 @@ interface SettingState {
 class Setting extends React.Component<SettingProps, SettingState> {
     constructor(props: SettingProps) {
         super(props);
-        this.state = {
-            curGameMode: props.curGameMode,
-        };
     }
 
     /**
@@ -61,14 +58,12 @@ class Setting extends React.Component<SettingProps, SettingState> {
     };
 
     render(): React.ReactNode {
-        const { curGameMode } = this.state;
-
         return (
             <div className="flex-cc">
                 <FormControl>
                     <RadioGroup
                         aria-labelledby="demo-radio-buttons-group-label"
-                        value={curGameMode.value}
+                        value={this.props.curGameMode.value}
                         name="radio-buttons-group"
                         row
                         onChange={(event) => {

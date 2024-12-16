@@ -13,6 +13,7 @@ interface GameState {
         winCondition: number;
         boardNum: number;
         toes: string[];
+        isCommon: boolean;
     };
 }
 /**
@@ -39,6 +40,7 @@ class GameIndex extends React.Component<object, GameState> {
                 winCondition: number;
                 boardNum: number;
                 toes: string[];
+                isCommon: boolean;
             },
         });
     };

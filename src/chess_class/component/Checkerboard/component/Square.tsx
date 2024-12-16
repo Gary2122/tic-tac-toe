@@ -8,6 +8,7 @@ interface SquareProps {
     isCur: boolean;
     rowIndex: number;
     colIndex: number;
+    isCommon: boolean;
     // squareClick: (rowIndex: number, colIndex: number) => void;
     setCurToeLoaction: (location: {
         rowIndex: number;
@@ -31,14 +32,14 @@ class Square extends React.Component<SquareProps, SquareState> {
             nextProps.size !== this.props.size ||
             nextProps.isCur !== this.props.isCur ||
             nextProps.rowIndex !== this.props.rowIndex ||
-            nextProps.colIndex !== this.props.colIndex
+            nextProps.colIndex !== this.props.colIndex ||
+            nextProps.isCommon !== this.props.isCommon
         );
     }
     /**
      * 鼠标点击事件
      */
     handleClick = (rowIndex: number, colIndex: number) => {
-        // this.props.squareClick(rowIndex, colIndex);
         this.props.setCurToeLoaction({
             rowIndex,
             colIndex,
@@ -46,43 +47,29 @@ class Square extends React.Component<SquareProps, SquareState> {
     };
 
     render() {
-        const { value, size, isCur, rowIndex, colIndex } = this.props;
+        const { value, size, isCur, rowIndex, colIndex, isCommon } = this.props;
         return (
             <div
-                className="square cursor-pointer bg-gray"
+                className="flex-cc b-solid b-cBlack square cursor-pointer bg-gray"
                 style={{
                     width: size,
                     height: size,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    border: '1px solid #000',
                 }}
                 onClick={() => this.handleClick(rowIndex, colIndex)}
             >
-                {value === 'white' || value === 'black' ? (
+                {isCommon ? (
                     <div
-                        className="flex-cc"
+                        className="flex-cc w-80% h-80% br-50"
                         style={{
-                            width: '80%',
-                            height: '80%',
                             backgroundColor: value,
-                            borderRadius: '50%',
                         }}
                     >
                         {isCur && (
-                            <div
-                                className="bg-red"
-                                style={{
-                                    width: '20%',
-                                    height: '20%',
-                                    borderRadius: '50%',
-                                }}
-                            ></div>
+                            <div className="bg-red w-20% h-20% br-50"></div>
                         )}
                     </div>
                 ) : (
-                    <div style={{ fontSize: '30px' }}>{value}</div>
+                    <div className="fs-30">{value}</div>
                 )}
             </div>
         );

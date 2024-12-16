@@ -10,6 +10,7 @@ interface SquareProps {
     value: string;
     size: number;
     isCur: boolean;
+    isCommon: boolean;
     rowIndex: number;
     colIndex: number;
     // squareClick: (rowIndex: number, colIndex: number) => void;
@@ -18,7 +19,7 @@ interface SquareProps {
  * 棋子部分
  */
 const Square: React.FC<SquareProps> = React.memo(
-    ({ value, size, rowIndex, colIndex, isCur }: SquareProps) => {
+    ({ value, size, rowIndex, colIndex, isCur, isCommon }: SquareProps) => {
         const dispatch = useDispatch();
         /**
          * 鼠标点击事件
@@ -39,29 +40,19 @@ const Square: React.FC<SquareProps> = React.memo(
                 }}
                 onClick={() => handleClick(rowIndex, colIndex)}
             >
-                {value === 'white' || value === 'black' ? (
+                {isCommon ? (
                     <div
-                        className="flex-cc"
+                        className="flex-cc w-80% h-80% br-50"
                         style={{
-                            width: '80%',
-                            height: '80%',
                             backgroundColor: value,
-                            borderRadius: '50%',
                         }}
                     >
                         {isCur && (
-                            <div
-                                className="bg-red"
-                                style={{
-                                    width: '20%',
-                                    height: '20%',
-                                    borderRadius: '50%',
-                                }}
-                            ></div>
+                            <div className="bg-red w-20% h-20% br-50"></div>
                         )}
                     </div>
                 ) : (
-                    <div style={{ fontSize: '30px' }}>{value}</div>
+                    <div className="fs-30">{value}</div>
                 )}
             </div>
         );
