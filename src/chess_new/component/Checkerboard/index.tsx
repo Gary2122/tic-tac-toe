@@ -70,21 +70,16 @@ const Checkerboard: React.FC<BoardProps> = ({ gameConfig }: BoardProps) => {
     }, [gameConfig.boardNum]);
 
     useEffect(() => {
-        handleClick(chessState.curRowIndex, chessState.curColIndex);
         // dispatch(setAIFirst(true));
-        if (chessState.curRowIndex === -1 || chessState.curColIndex === -1)
+        if (chessState.curRowIndex === -1 || chessState.curColIndex === -1) {
             if (chessState.fightWithAI && chessState.AIFirst) {
                 handleAIPlay(squares);
             }
+        } else {
+            handleClick(chessState.curRowIndex, chessState.curColIndex);
+        }
     }, [chessState.curRowIndex, chessState.curColIndex]);
     const [curPlayer, setCurPlayer] = React.useState(false); // 用于控制是否轮到当前玩家下棋
-    // useEffect(() => {
-    //     if (chessState.AIFirst && !chessState.winner) {
-    //         handleAIPlay(squares);
-    //         dispatch(setAIFirst(false));
-    //     }
-    // }, [squares, chessState.AIFirst]);
-    // const squares = chessState.history[chessState.history.length - 1];
 
     /**
      * 鼠标点击事件
