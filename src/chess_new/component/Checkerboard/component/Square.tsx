@@ -22,11 +22,17 @@ const Square: React.FC<SquareProps> = React.memo(
     ({ value, size, rowIndex, colIndex, isCur, isCommon }: SquareProps) => {
         const dispatch = useDispatch();
         /**
+         * 鼠标点击事件(缓存)
+         */
+        const memorizedClick = React.useCallback(() => {
+            dispatch(setCurToeLoaction({ rowIndex, colIndex }));
+        }, [dispatch, rowIndex, colIndex]);
+        /**
          * 鼠标点击事件
          */
-        const handleClick = (rowIndex: number, colIndex: number) => {
-            dispatch(setCurToeLoaction({ rowIndex, colIndex }));
-        };
+        // const handleClick = (rowIndex: number, colIndex: number) => {
+        //     dispatch(setCurToeLoaction({ rowIndex, colIndex }));
+        // };
         return (
             <div
                 className="square cursor-pointer bg-gray"
@@ -38,7 +44,7 @@ const Square: React.FC<SquareProps> = React.memo(
                     justifyContent: 'center',
                     border: '1px solid #000',
                 }}
-                onClick={() => handleClick(rowIndex, colIndex)}
+                onClick={memorizedClick}
             >
                 {isCommon ? (
                     <div

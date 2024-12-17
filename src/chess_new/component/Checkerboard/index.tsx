@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { calculateWinner } from '../../../tools/calculateWinner';
+import { findBestMove } from '../../../tools/fightCalculate';
 import { chessConfig } from '../../config/config';
 import GameInfo from './component/GameInfo';
 import Square from './component/Square';
@@ -9,6 +10,7 @@ import {
     resetHistory,
     setWinner,
     resetLocation,
+    // setAIFirst,
 } from '../../../store/modules/ChessState';
 interface BoardProps {
     gameConfig: {
@@ -35,24 +37,116 @@ const Checkerboard: React.FC<BoardProps> = ({ gameConfig }: BoardProps) => {
                 history: string[][][]; // history 的类型
                 curRowIndex: number;
                 curColIndex: number;
+                fightWithAI: boolean;
+                AIFirst: boolean;
             };
         }) => store.chess
     );
-
+    const initArr = Array.from({ length: gameConfig.boardNum }, () =>
+        new Array(gameConfig.boardNum).fill('')
+    );
+    const [squares, setSquares] = React.useState<string[][]>(initArr);
+    // const [nextUser, setNextUser] = React.useState<string>('');
+    const nextUser =
+        gameConfig.toes[
+            chessState.fightWithAI && chessState.AIFirst
+                ? chessState.history.length % 2
+                : (chessState.history.length + 1) % 2
+        ];
     useEffect(() => {
+        /**
+         * 初始化游戏
+         */
+        const initOptions = () => {
+            dispatch(resetHistory(gameConfig.boardNum));
+            dispatch(resetLocation());
+            dispatch(setWinner(''));
+        };
+        initOptions();
+        if (chessState.fightWithAI && chessState.AIFirst) {
+            handleAIPlay(squares);
+        }
         // 初始化棋盘
-        dispatch(resetHistory(gameConfig.boardNum));
-        dispatch(resetLocation());
-        dispatch(setWinner(''));
-    }, [gameConfig.boardNum, dispatch]);
+    }, [gameConfig.boardNum]);
 
     useEffect(() => {
-        // 下棋后更新curRowIndex和curColIndex
         handleClick(chessState.curRowIndex, chessState.curColIndex);
+        // dispatch(setAIFirst(true));
+        if (chessState.curRowIndex === -1 || chessState.curColIndex === -1)
+            if (chessState.fightWithAI && chessState.AIFirst) {
+                handleAIPlay(squares);
+            }
     }, [chessState.curRowIndex, chessState.curColIndex]);
+    const [curPlayer, setCurPlayer] = React.useState(false); // 用于控制是否轮到当前玩家下棋
+    // useEffect(() => {
+    //     if (chessState.AIFirst && !chessState.winner) {
+    //         handleAIPlay(squares);
+    //         dispatch(setAIFirst(false));
+    //     }
+    // }, [squares, chessState.AIFirst]);
+    // const squares = chessState.history[chessState.history.length - 1];
 
-    const squares = chessState.history[chessState.history.length - 1];
-    const nextUser = gameConfig.toes[chessState.history.length % 2];
+    /**
+     * 鼠标点击事件
+     */
+    const handleClick = async (rowIndex: number, colIndex: number) => {
+        const newSquares = adjustSquares(rowIndex, colIndex) as string[][];
+        if (!newSquares) return;
+
+        judgeWinner(newSquares, gameConfig.winCondition, rowIndex, colIndex);
+        setCurPlayer(true);
+    };
+    useEffect(() => {
+        if (chessState.fightWithAI)
+            if (curPlayer) {
+                handleAIPlay(squares);
+                setCurPlayer(false);
+            }
+    }, [curPlayer, chessState.fightWithAI]);
+    /**
+     * AI 下棋
+     */
+    const handleAIPlay = async (squares: string[][]) => {
+        if (chessState.winner) return;
+        if (
+            !squares ||
+            !Array.isArray(squares) ||
+            squares.length !== gameConfig.winCondition
+        )
+            return;
+        const bestMove = findBestMove(
+            squares,
+            true,
+            gameConfig.toes[1],
+            gameConfig.toes[0]
+        );
+
+        if (bestMove) {
+            const { row_i, col_j } = bestMove;
+            // 更新棋盘
+            const newSquares = adjustSquares(row_i, col_j) as string[][];
+            // 判断 AI 下子后的游戏状态
+            judgeWinner(newSquares, gameConfig.winCondition, row_i, col_j);
+        }
+    };
+
+    /**
+     * 下子时改变棋盘squares和history数据
+     */
+    const adjustSquares = (rowIndex: number, colIndex: number) => {
+        if (rowIndex === -1 || colIndex === -1) return [];
+        if (chessState.winner || squares[rowIndex][colIndex] !== '') return [];
+
+        const newSquares = squares.map((row, rIndex) =>
+            row.map((col, cIndex) =>
+                rIndex === rowIndex && cIndex === colIndex ? nextUser : col
+            )
+        );
+        setSquares(newSquares);
+        dispatch(setHistory([...chessState.history, newSquares]));
+        return newSquares;
+    };
+
     /**
      * 重置游戏
      */
@@ -60,6 +154,8 @@ const Checkerboard: React.FC<BoardProps> = ({ gameConfig }: BoardProps) => {
         dispatch(setWinner(''));
         dispatch(resetHistory(gameConfig.boardNum));
         dispatch(resetLocation());
+        setCurPlayer(false);
+        setSquares(initArr);
     };
 
     /**
@@ -73,23 +169,7 @@ const Checkerboard: React.FC<BoardProps> = ({ gameConfig }: BoardProps) => {
         dispatch(setHistory(chessState.history.slice(0, step + 1)));
         dispatch(setWinner(''));
         dispatch(resetLocation());
-    };
-
-    /**
-     * 下子时改变棋盘squares和history数据
-     */
-    const adjustSquares = (rowIndex: number, colIndex: number) => {
-        if (rowIndex === -1 || colIndex === -1) return;
-        if (chessState.winner || squares[rowIndex][colIndex] !== '') return;
-
-        const newSquares = squares.map((row, rIndex) =>
-            row.map((col, cIndex) =>
-                rIndex === rowIndex && cIndex === colIndex ? nextUser : col
-            )
-        );
-        // dispatch(setLocation({ rowIndex, colIndex }));
-        dispatch(setHistory([...chessState.history, newSquares]));
-        return newSquares;
+        setSquares(chessState.history[step]);
     };
 
     /**
@@ -116,15 +196,6 @@ const Checkerboard: React.FC<BoardProps> = ({ gameConfig }: BoardProps) => {
             dispatch(setWinner('Draw'));
         }
     };
-    /**
-     * 鼠标点击事件
-     */
-    const handleClick = (rowIndex: number, colIndex: number) => {
-        const newSquares = adjustSquares(rowIndex, colIndex) as string[][];
-        if (!newSquares) return;
-        judgeWinner(newSquares, gameConfig.winCondition, rowIndex, colIndex);
-    };
-
     return (
         <div>
             <div className="historyBox">

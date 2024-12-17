@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 interface ChessState {
     // AI对战
     fightWithAI: boolean;
+    AIFirst: boolean;
     winner: string;
     history: string[][][];
     // historyLoactionArray: { rowIndex: number; colIndex: number }[];
@@ -11,9 +12,10 @@ interface ChessState {
 }
 
 const initialState: ChessState = {
-    fightWithAI: false,
+    fightWithAI: true,
+    AIFirst: true,
     winner: '',
-    history: [[]],
+    history: [[[]]],
     // historyLoactionArray: [],
     curRowIndex: -1,
     curColIndex: -1,
@@ -35,6 +37,14 @@ const chessSlice = createSlice({
         // 重置AI对战
         resetFightWithAI: (state) => {
             state.fightWithAI = false;
+        },
+        // 设置AI先手
+        setAIFirst: (state, action: PayloadAction<boolean>) => {
+            state.AIFirst = action.payload;
+        },
+        // 重置AI先手
+        resetAIFirst: (state) => {
+            state.AIFirst = true;
         },
         // 设置赢家
         setWinner: (state, action: PayloadAction<string>) => {
@@ -70,12 +80,12 @@ export const {
     setWinner,
     setHistory,
     resetHistory,
-    // setCurRowIndex,
-    // setCurColIndex,
     resetLocation,
     setCurToeLoaction,
     setFightWithAI,
     resetFightWithAI,
+    setAIFirst,
+    resetAIFirst,
 } = chessSlice.actions;
 
 export default chessSlice.reducer;

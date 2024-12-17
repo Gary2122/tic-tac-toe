@@ -18,6 +18,16 @@ export const chessConfig = {
             value: 'human',
         },
     ],
+    fightCondition: [
+        {
+            label: '先手',
+            value: 'first',
+        },
+        {
+            label: '后手',
+            value: 'second',
+        },
+    ],
     gameMode: [
         {
             label: '井子棋',
@@ -26,6 +36,7 @@ export const chessConfig = {
             boardNum: 3,
             isCommon: false,
             winCondition: 3,
+            computerFight: true,
             toes: ['X', 'O'],
         },
         {
@@ -35,6 +46,7 @@ export const chessConfig = {
             boardNum: 15,
             isCommon: true,
             winCondition: 5,
+            computerFight: false,
             toes: ['black', 'white'],
         },
     ],
