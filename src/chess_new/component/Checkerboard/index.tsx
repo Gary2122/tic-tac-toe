@@ -63,9 +63,9 @@ const Checkerboard: React.FC<BoardProps> = ({ gameConfig }: BoardProps) => {
             dispatch(setWinner(''));
         };
         initOptions();
-        if (chessState.fightWithAI && chessState.AIFirst) {
-            handleAIPlay(squares);
-        }
+        // if (chessState.fightWithAI && chessState.AIFirst) {
+        //     handleAIPlay(squares);
+        // }
         // 初始化棋盘
     }, [gameConfig.boardNum]);
 
