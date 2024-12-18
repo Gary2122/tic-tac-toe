@@ -129,8 +129,8 @@ const Checkerboard: React.FC<BoardProps> = ({ gameConfig }: BoardProps) => {
      * 下子时改变棋盘squares和history数据
      */
     const adjustSquares = (rowIndex: number, colIndex: number) => {
-        if (rowIndex === -1 || colIndex === -1) return [];
-        if (chessState.winner || squares[rowIndex][colIndex] !== '') return [];
+        if (rowIndex === -1 || colIndex === -1) return;
+        if (chessState.winner || squares[rowIndex][colIndex] !== '') return;
 
         const newSquares = squares.map((row, rIndex) =>
             row.map((col, cIndex) =>
