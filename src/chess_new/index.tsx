@@ -51,11 +51,16 @@ const GameIndex: React.FC = () => {
      * 切换棋盘风格
      */
     const changeBoardTheme = () => {
-        setBoardTheme(
-            boardTheme === chessConfig.boardTheme.gray
-                ? chessConfig.boardTheme.orange
-                : chessConfig.boardTheme.gray
-        );
+        // 主题配置
+        const themes = [
+            chessConfig.boardTheme.gray,
+            chessConfig.boardTheme.orange,
+            chessConfig.boardTheme.green,
+        ];
+        const currentIndex = themes.findIndex((theme) => theme === boardTheme);
+        const nextIndex = (currentIndex + 1) % themes.length;
+
+        setBoardTheme(themes[nextIndex]);
     };
     return (
         <div
