@@ -6,6 +6,7 @@ import {
     // setCurRowIndex,
     setCurToeLoaction,
 } from '../../../../store/modules/ChessState';
+import { BoardThemeContext } from '../../../../contexts/squaresTheme';
 interface SquareProps {
     value: string;
     size: number;
@@ -21,6 +22,7 @@ interface SquareProps {
 const Square: React.FC<SquareProps> = React.memo(
     ({ value, size, rowIndex, colIndex, isCur, isCommon }: SquareProps) => {
         const dispatch = useDispatch();
+        const boardTheme = React.useContext(BoardThemeContext);
         /**
          * 鼠标点击事件(缓存)
          */
@@ -35,14 +37,11 @@ const Square: React.FC<SquareProps> = React.memo(
         // };
         return (
             <div
-                className="square cursor-pointer bg-gray"
+                className="square cursor-pointer bg-#fff flex-cc border-solid border-black"
                 style={{
                     width: size,
                     height: size,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    border: '1px solid #000',
+                    backgroundColor: boardTheme.background,
                 }}
                 onClick={memorizedClick}
             >

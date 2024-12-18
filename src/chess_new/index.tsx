@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import Checkerboard from './component/Checkerboard';
 import Setting from './component/Setting';
 import { Button } from '@mui/material';
-import { chessConfig } from './config/config';
+import { chessConfig } from '../config/config';
 import { useDispatch } from 'react-redux';
+import { BoardThemeContext } from '../contexts/squaresTheme';
 import {
     resetLocation,
     resetAIFirst,
@@ -15,7 +16,7 @@ import {
  */
 const GameIndex: React.FC = () => {
     const [gameStart, setGameStart] = useState(false);
-
+    const [boardTheme, setBoardTheme] = useState(chessConfig.boardTheme.gray);
     const [curGameConfig, setCurGameConfig] = useState(chessConfig.gameMode[0]);
     const dispatch = useDispatch();
     /**
@@ -44,6 +45,17 @@ const GameIndex: React.FC = () => {
         dispatch(setWinner(''));
         dispatch(resetAIFirst());
         setGameStart(false);
+    };
+
+    /**
+     * 切换棋盘风格
+     */
+    const changeBoardTheme = () => {
+        setBoardTheme(
+            boardTheme === chessConfig.boardTheme.gray
+                ? chessConfig.boardTheme.orange
+                : chessConfig.boardTheme.gray
+        );
     };
     return (
         <div
@@ -79,8 +91,20 @@ const GameIndex: React.FC = () => {
                     >
                         返回主页
                     </Button>
+                    <Button
+                        variant="contained"
+                        color="success"
+                        onClick={() => changeBoardTheme()}
+                        style={{ marginLeft: '20px' }}
+                    >
+                        切换主题
+                    </Button>
                     <div className="flex-cc transition-all mt-20">
-                        <Checkerboard gameConfig={curGameConfig}></Checkerboard>
+                        <BoardThemeContext.Provider value={boardTheme}>
+                            <Checkerboard
+                                gameConfig={curGameConfig}
+                            ></Checkerboard>
+                        </BoardThemeContext.Provider>
                     </div>
                 </>
             )}

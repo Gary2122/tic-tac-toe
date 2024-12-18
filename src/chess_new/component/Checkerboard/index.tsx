@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { calculateWinner } from '../../../tools/calculateWinner';
 import { findBestMove } from '../../../tools/fightCalculate';
-import { chessConfig } from '../../config/config';
+import { chessConfig } from '../../../config/config';
 import GameInfo from './component/GameInfo';
 import Square from './component/Square';
 import {

@@ -3,7 +3,7 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import { chessConfig } from '../config/config';
+import { chessConfig } from '../../config/config';
 import { setFightWithAI, setAIFirst } from '../../store/modules/ChessState';
 import { useDispatch, useSelector } from 'react-redux';
 interface SettingProps {

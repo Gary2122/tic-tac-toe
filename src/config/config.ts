@@ -50,4 +50,18 @@ export const chessConfig = {
             toes: ['black', 'white'],
         },
     ],
+    boardTheme: {
+        gray: {
+            label: 'blueGray',
+            background: '#abc8ca',
+        },
+        orange: {
+            label: 'oarange',
+            background: '#f4a460',
+        },
+        green: {
+            label: 'springGreen',
+            background: '#d9c67b',
+        },
+    },
 };
