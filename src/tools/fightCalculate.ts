@@ -91,7 +91,7 @@ const minimax = (
         for (let row_i = 0; row_i < 3; row_i++) {
             for (let col_j = 0; col_j < 3; col_j++) {
                 if (squares[row_i][col_j] === '') {
-                    squares[row_i][col_j] = 'O';
+                    squares[row_i][col_j] = AIRole;
                     const score = minimax(
                         squares,
                         depth + 1,
@@ -112,7 +112,7 @@ const minimax = (
         for (let row_i = 0; row_i < 3; row_i++) {
             for (let col_j = 0; col_j < 3; col_j++) {
                 if (squares[row_i][col_j] === '') {
-                    squares[row_i][col_j] = 'X';
+                    squares[row_i][col_j] = userRole;
                     const score = minimax(
                         squares,
                         depth + 1,
