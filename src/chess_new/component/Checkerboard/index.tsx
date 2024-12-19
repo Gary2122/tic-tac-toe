@@ -117,11 +117,16 @@ const Checkerboard: React.FC<BoardProps> = ({ gameConfig }: BoardProps) => {
         );
 
         if (bestMove) {
-            const { row_i, col_j } = bestMove;
+            const { rowIndex, colIndex } = bestMove;
             // 更新棋盘
-            const newSquares = adjustSquares(row_i, col_j) as string[][];
+            const newSquares = adjustSquares(rowIndex, colIndex) as string[][];
             // 判断 AI 下子后的游戏状态
-            judgeWinner(newSquares, gameConfig.winCondition, row_i, col_j);
+            judgeWinner(
+                newSquares,
+                gameConfig.winCondition,
+                rowIndex,
+                colIndex
+            );
         }
     };
 

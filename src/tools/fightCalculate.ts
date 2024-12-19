@@ -1,17 +1,3 @@
-/* eslint-disable no-else-return */
-/**
- * AI算法
- */
-const boardIsFull = (squares: string[][]): boolean => {
-    for (let row_i = 0; row_i < squares.length; row_i++) {
-        for (let col_j = 0; col_j < squares[row_i].length; col_j++) {
-            if (squares[row_i][col_j] === '') {
-                return false;
-            }
-        }
-    }
-    return true;
-};
 /**
  * 评估棋盘状态的函数
  * @param squares 棋盘
@@ -67,15 +53,37 @@ const evaluateBoard = (
 };
 
 /**
- * Minimax 算法
- * @param squares 棋盘
- * @param depth 当前深度
- * @param isMaximizing 是否是最大化阶段（AI行为）
- * @param isFirstPlayer 是否是AI先手
+ * 判断棋盘是否已满
  */
-const minimax = (
+const boardIsFull = (squares: string[][]): boolean => {
+    return squares.every((row) => row.every((cell) => cell !== ''));
+};
+
+/**
+ * 获取空格位置
+ */
+const getEmptySpaces = (
+    squares: string[][]
+): Array<{ rowIndex: number; colIndex: number }> => {
+    const emptySpaces: Array<{ rowIndex: number; colIndex: number }> = [];
+    for (let rowIndex = 0; rowIndex < 3; rowIndex++) {
+        for (let colIndex = 0; colIndex < 3; colIndex++) {
+            if (squares[rowIndex][colIndex] === '') {
+                emptySpaces.push({ rowIndex, colIndex });
+            }
+        }
+    }
+    return emptySpaces;
+};
+
+/**
+ * 获取空格位置
+ */
+const minimaxWithAlphaBeta = (
     squares: string[][],
     depth: number,
+    alpha: number,
+    beta: number,
     isMaximizing: boolean,
     isFirstPlayer: boolean,
     AIRole: string,
@@ -86,54 +94,51 @@ const minimax = (
     if (boardIsFull(squares)) return 0;
 
     if (isMaximizing) {
-        // AI最大化得分（先手）
         let max = -10000;
-        for (let row_i = 0; row_i < 3; row_i++) {
-            for (let col_j = 0; col_j < 3; col_j++) {
-                if (squares[row_i][col_j] === '') {
-                    squares[row_i][col_j] = AIRole;
-                    const score = minimax(
-                        squares,
-                        depth + 1,
-                        false,
-                        isFirstPlayer,
-                        AIRole,
-                        userRole
-                    );
-                    squares[row_i][col_j] = '';
-                    max = Math.max(max, score);
-                }
-            }
-        }
+        const emptySpaces = getEmptySpaces(squares);
+        emptySpaces.forEach(({ rowIndex, colIndex }) => {
+            squares[rowIndex][colIndex] = AIRole;
+            const score = minimaxWithAlphaBeta(
+                squares,
+                depth + 1,
+                alpha,
+                beta,
+                false,
+                isFirstPlayer,
+                AIRole,
+                userRole
+            );
+            squares[rowIndex][colIndex] = '';
+            max = Math.max(max, score);
+            alpha = Math.max(alpha, max);
+            if (beta <= alpha) return; // 剪枝
+        });
         return max;
-    } else {
-        // 玩家最小化得分（后手）
-        let min = 10000;
-        for (let row_i = 0; row_i < 3; row_i++) {
-            for (let col_j = 0; col_j < 3; col_j++) {
-                if (squares[row_i][col_j] === '') {
-                    squares[row_i][col_j] = userRole;
-                    const score = minimax(
-                        squares,
-                        depth + 1,
-                        true,
-                        isFirstPlayer,
-                        AIRole,
-                        userRole
-                    );
-                    squares[row_i][col_j] = '';
-                    min = Math.min(min, score);
-                }
-            }
-        }
-        return min;
     }
-};
+    let min = 10000;
+    const emptySpaces = getEmptySpaces(squares);
 
+    emptySpaces.forEach(({ rowIndex, colIndex }) => {
+        squares[rowIndex][colIndex] = userRole;
+        const score = minimaxWithAlphaBeta(
+            squares,
+            depth + 1,
+            alpha,
+            beta,
+            true,
+            isFirstPlayer,
+            AIRole,
+            userRole
+        );
+        squares[rowIndex][colIndex] = '';
+        min = Math.min(min, score);
+        beta = Math.min(beta, min);
+        if (beta <= alpha) return; // 剪枝
+    });
+    return min;
+};
 /**
- * 找到最佳的落子位置
- * @param squares 棋盘
- * @param isFirstPlayer 是否是AI先手
+ * 获取空格位置
  */
 export const findBestMove = (
     squares: string[][],
@@ -145,39 +150,87 @@ export const findBestMove = (
     let bestScore = isFirstPlayer ? -10000 : 10000;
     let bestMove = null;
 
-    const priorityMoves = [
-        { row_i: 1, col_j: 1 }, // 中心
-        { row_i: 0, col_j: 0 },
-        { row_i: 0, col_j: 2 }, // 角落
-        { row_i: 2, col_j: 0 },
-        { row_i: 2, col_j: 2 },
-        { row_i: 0, col_j: 1 },
-        { row_i: 1, col_j: 0 }, // 边
-        { row_i: 1, col_j: 2 },
-        { row_i: 2, col_j: 1 },
-    ];
-
-    for (const { row_i, col_j } of priorityMoves) {
-        if (newSquares[row_i][col_j] === '') {
-            newSquares[row_i][col_j] = isFirstPlayer ? AIRole : userRole;
-            const score = minimax(
-                newSquares,
-                0,
-                !isFirstPlayer,
-                isFirstPlayer,
-                AIRole,
-                userRole
-            );
-            newSquares[row_i][col_j] = '';
-            if (
-                (isFirstPlayer && score > bestScore) ||
-                (!isFirstPlayer && score < bestScore)
-            ) {
-                bestScore = score;
-                bestMove = { row_i, col_j };
-            }
+    const emptySpaces = getEmptySpaces(newSquares);
+    for (const { rowIndex, colIndex } of emptySpaces) {
+        newSquares[rowIndex][colIndex] = isFirstPlayer ? AIRole : userRole;
+        const score = minimaxWithAlphaBeta(
+            newSquares,
+            0,
+            -10000,
+            10000,
+            !isFirstPlayer,
+            isFirstPlayer,
+            AIRole,
+            userRole
+        );
+        newSquares[rowIndex][colIndex] = '';
+        if (
+            (isFirstPlayer && score > bestScore) ||
+            (!isFirstPlayer && score < bestScore)
+        ) {
+            bestScore = score;
+            bestMove = { rowIndex, colIndex };
         }
     }
 
     return bestMove;
 };
+
+// /**
+//  * Minimax 算法
+//  * @param squares 棋盘
+//  * @param depth 当前深度
+//  * @param isMaximizing 是否是最大化阶段（AI行为）
+//  * @param isFirstPlayer 是否是AI先手
+//  */
+// const minimax = (
+//     squares: string[][],
+//     depth: number,
+//     isMaximizing: boolean,
+//     isFirstPlayer: boolean,
+//     AIRole: string,
+//     userRole: string
+// ): number => {
+//     const score = evaluateBoard(squares, isFirstPlayer, AIRole, userRole);
+//     if (score === 10 || score === -10) return score;
+//     if (boardIsFull(squares)) return 0;
+
+//     if (isMaximizing) {
+//         // AI最大化得分（先手）
+//         let max = -10000;
+//         const emptySpaces = getEmptySpaces(squares);
+
+//         emptySpaces.forEach(({ rowIndex, colIndex }) => {
+//             squares[rowIndex][colIndex] = AIRole;
+//             const score = minimax(
+//                 squares,
+//                 depth + 1,
+//                 false,
+//                 isFirstPlayer,
+//                 AIRole,
+//                 userRole
+//             );
+//             squares[rowIndex][colIndex] = '';
+//             max = Math.max(max, score);
+//         });
+//         return max;
+//     }
+//     // 玩家最小化得分（后手）
+//     let min = 10000;
+
+//     const emptySpaces = getEmptySpaces(squares);
+//     emptySpaces.forEach(({ rowIndex, colIndex }) => {
+//         squares[rowIndex][colIndex] = userRole;
+//         const score = minimax(
+//             squares,
+//             depth + 1,
+//             true,
+//             isFirstPlayer,
+//             AIRole,
+//             userRole
+//         );
+//         squares[rowIndex][colIndex] = '';
+//         min = Math.min(min, score);
+//     });
+//     return min;
+// };
